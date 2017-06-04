@@ -1,6 +1,6 @@
 # SantaScramble
 A graphical user interface (GUI) for the `filter` module of my
-[BldSuite](https://github.com/suushiemaniac/BLDSuite).
+[BLDSuite](https://github.com/suushiemaniac/BLDSuite).
 Requires Java 8u41 or later.
 
 ## Usage
@@ -34,16 +34,16 @@ The file looks something like this:
 	"buffer": {
 		"C": 0,
 		"E": 20,
-		"T": 20,
-		"W": 20,
-		"X": 0
+		"TCe": 20,
+		"Wi": 20,
+		"XCe": 0
 	},
 	"lettering": {
 		"C": "ABCDEFGHIJKLMNOPQRSTUVWX",
 		"E": "ABCDEFGHIJKLMNOPQRSTUVWX",
-		"T": "ABCDEFGHIJKLMNOPQRSTUVWX",
-		"W": "ABCDEFGHIJKLMNOPQRSTUVWX",
-		"X": "ABCDEFGHIJKLMNOPQRSTUVWX"
+		"TCe": "ABCDEFGHIJKLMNOPQRSTUVWX",
+		"Wi": "ABCDEFGHIJKLMNOPQRSTUVWX",
+		"XCe": "ABCDEFGHIJKLMNOPQRSTUVWX"
 	},
 	"orientation": {
 		"front": 2,
