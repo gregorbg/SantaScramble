@@ -506,11 +506,18 @@ public class Main extends Application {
 		JSON buffers = config.get("buffer");
 		JSON lettering = config.get("lettering");
 
-		scr.setSolvingOrientation(orientation.get("top").intValue(), orientation.get("front").intValue());
+		if (orientation != null) {
+			scr.setSolvingOrientation(orientation.get("top").intValue(), orientation.get("front").intValue());
+		}
 
 		for (PieceType type : scr.generateAnalyzingPuzzle().getPieceTypes()) {
-			scr.setBuffer(type, buffers.get(type.mnemonic()).intValue());
-			scr.setLetteringScheme(type, lettering.get(type.mnemonic()).stringValue().split(""));
+			if (buffers != null) {
+				scr.setBuffer(type, buffers.get(type.mnemonic()).intValue());
+			}
+			
+			if (lettering != null) {
+				scr.setLetteringScheme(type, lettering.get(type.mnemonic()).stringValue().split(""));
+			}
 		}
 	}
 
