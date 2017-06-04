@@ -504,11 +504,13 @@ public class Main extends Application {
 
 		JSON orientation = config.get("orientation");
 		JSON buffers = config.get("buffer");
+		JSON lettering = config.get("lettering");
 
 		scr.setSolvingOrientation(orientation.get("top").intValue(), orientation.get("front").intValue());
 
 		for (PieceType type : scr.generateAnalyzingPuzzle().getPieceTypes()) {
 			scr.setBuffer(type, buffers.get(type.mnemonic()).intValue());
+			scr.setLetteringScheme(type, lettering.get(type.mnemonic()).stringValue().split(""));
 		}
 	}
 
@@ -522,6 +524,7 @@ public class Main extends Application {
 
     		JSON defaultOrientation = JSON.emptyObject();
     		JSON defaultBuffers = JSON.emptyObject();
+    		JSON defaultLettering = JSON.emptyObject();
 
     		defaultOrientation.set("top", JSON.fromNative(0));
     		defaultOrientation.set("front", JSON.fromNative(2));
@@ -532,8 +535,15 @@ public class Main extends Application {
     		defaultBuffers.set("X", JSON.fromNative(0));
     		defaultBuffers.set("T", JSON.fromNative(20));
 
+    		defaultLettering.set("C", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("E", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("W", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("X", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("T", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+
     		defaultConfig.set("orientation", defaultOrientation);
     		defaultConfig.set("buffer", defaultBuffers);
+    		defaultConfig.set("lettering", defaultLettering);
 
     		JSON.toFile(defaultConfig, configFile);
     		return defaultConfig;
