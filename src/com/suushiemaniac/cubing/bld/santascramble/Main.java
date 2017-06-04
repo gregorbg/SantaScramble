@@ -66,6 +66,8 @@ public class Main extends Application {
 
 			result = userPick.showAndWait();
         }
+
+        System.exit(0);
     }
 
     protected void showSantaPanel(CubicPuzzle puzzle) {
