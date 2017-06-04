@@ -54,9 +54,9 @@ The file looks something like this:
 where the letters denote pieces.
 - `C` = Corner
 - `E` = Edge
-- `W` = Wing
-- `X` = XCenter
-- `T` = TCenter
+- `Wi` = Wing
+- `XCe` = XCenter
+- `TCe` = TCenter
 
 Puzzles larger than 5x5 are currently not supported.
 

@@ -514,7 +514,7 @@ public class Main extends Application {
 			if (buffers != null) {
 				scr.setBuffer(type, buffers.get(type.mnemonic()).intValue());
 			}
-			
+
 			if (lettering != null) {
 				scr.setLetteringScheme(type, lettering.get(type.mnemonic()).stringValue().split(""));
 			}
@@ -538,15 +538,15 @@ public class Main extends Application {
 
     		defaultBuffers.set("C", JSON.fromNative(0));
     		defaultBuffers.set("E", JSON.fromNative(20));
-    		defaultBuffers.set("W", JSON.fromNative(20));
-    		defaultBuffers.set("X", JSON.fromNative(0));
-    		defaultBuffers.set("T", JSON.fromNative(20));
+    		defaultBuffers.set("Wi", JSON.fromNative(20));
+    		defaultBuffers.set("XCe", JSON.fromNative(0));
+    		defaultBuffers.set("TCe", JSON.fromNative(20));
 
     		defaultLettering.set("C", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
     		defaultLettering.set("E", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
-    		defaultLettering.set("W", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
-    		defaultLettering.set("X", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
-    		defaultLettering.set("T", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("Wi", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("XCe", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
+    		defaultLettering.set("TCe", JSON.fromNative("ABCDEFGHIJKLMNOPQRSTUVWX"));
 
     		defaultConfig.set("orientation", defaultOrientation);
     		defaultConfig.set("buffer", defaultBuffers);
