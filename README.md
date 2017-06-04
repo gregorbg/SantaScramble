@@ -88,5 +88,4 @@ For each piece type, the lettering scheme is represented by a **joined string of
 No delimiter between letters!
 
 ## Help
-If you need a hand at configuring or have any other feedback, shoot me an email at
-<mailto:suushiemaniac@gmail.com>
+If you need a hand at configuring or have any other feedback, shoot me an [email](mailto:suushiemaniac@gmail.com)
