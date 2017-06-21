@@ -4,6 +4,7 @@ import com.suushiemaniac.cubing.alglib.alg.Algorithm;
 import com.suushiemaniac.cubing.bld.analyze.BldCube;
 import com.suushiemaniac.cubing.bld.analyze.BldCube.CornerParityMethod;
 import com.suushiemaniac.cubing.bld.analyze.BldPuzzle;
+import com.suushiemaniac.cubing.bld.analyze.ThreeBldCube;
 import com.suushiemaniac.cubing.bld.filter.BldScramble;
 import com.suushiemaniac.cubing.bld.filter.condition.BooleanCondition;
 import com.suushiemaniac.cubing.bld.filter.condition.IntCondition;
@@ -14,6 +15,7 @@ import com.suushiemaniac.io.net.rest.RestFul;
 import com.suushiemaniac.io.net.rest.request.Request;
 import com.suushiemaniac.io.net.rest.response.Response;
 import com.suushiemaniac.lang.json.JSON;
+import cs.min2phase.Tools;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
@@ -36,11 +38,14 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import net.gnehzr.tnoodle.scrambles.Puzzle;
+import puzzle.ThreeByThreeCubePuzzle;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Main extends Application {
     @Override
@@ -92,13 +97,34 @@ public class Main extends Application {
 		Map<PieceType, Map<String, Pair<Spinner<Integer>, Spinner<Integer>>>> masterIntMap = new HashMap<>();
 		Map<PieceType, Map<String, Pair<CheckBox, CheckBox>>> masterBoolMap = new HashMap<>();
 		Map<PieceType, HBox> masterLetterPairMap = new HashMap<>();
+		Map<PieceType, CheckBox> masterScrambleMap = new HashMap<>();
 
 		for (PieceType type : puzzle.getAnalyzingPuzzle().getPieceTypes()) {
+			VBox pieceTypeContainer = new VBox(12);
+
 			Map<String, Pair<Spinner<Integer>, Spinner<Integer>>> typeIntMap = new HashMap<>();
 			Map<String, Pair<CheckBox, CheckBox>> typeBoolMap = new HashMap<>();
 
-			Label heading = new Label(type.humanName());
-			heading.setFont(Font.font(heading.getFont().getFamily(), FontWeight.BOLD, heading.getFont().getSize()));
+			HBox heading = new HBox(8);
+			Label headingLabel = new Label(type.humanName());
+			headingLabel.setFont(Font.font(headingLabel.getFont().getFamily(), FontWeight.BOLD, headingLabel.getFont().getSize()));
+			heading.getChildren().add(headingLabel);
+
+			if (puzzle.getAnalyzingPuzzle() instanceof ThreeBldCube) {
+				CheckBox scrambleBox = new CheckBox("Scramble this part?");
+				pieceTypeContainer.disableProperty().bind(scrambleBox.selectedProperty().not());
+
+				masterScrambleMap.put(type, scrambleBox);
+
+				scrambleBox.setSelected(true);
+				heading.getChildren().add(scrambleBox);
+			} else {
+				CheckBox mockBox = new CheckBox();
+				mockBox.setSelected(true);
+
+				masterScrambleMap.put(type, mockBox);
+			}
+
 			container.getChildren().add(heading);
 
 			if (puzzle.getAnalyzingPuzzle() instanceof BldCube
@@ -118,7 +144,7 @@ public class Main extends Application {
 				HBox.setHgrow(methodLabel, Priority.ALWAYS);
 				HBox.setHgrow(methods, Priority.ALWAYS);
 
-				container.getChildren().add(methodBox);
+				pieceTypeContainer.getChildren().add(methodBox);
 			}
 
 			for (String boolProperty : boolProperties) {
@@ -152,7 +178,7 @@ public class Main extends Application {
 					HBox.setHgrow(allowMisOrient, Priority.ALWAYS);
 				}
 
-				container.getChildren().add(line);
+				pieceTypeContainer.getChildren().add(line);
 			}
 
 			for (String intProperty : intProperties) {
@@ -189,7 +215,7 @@ public class Main extends Application {
 					HBox.setHgrow(minText, Priority.NEVER);
 					HBox.setHgrow(maxText, Priority.NEVER);
 
-					container.getChildren().add(line);
+					pieceTypeContainer.getChildren().add(line);
 				}
 			}
 
@@ -212,11 +238,13 @@ public class Main extends Application {
 				lpInput.requestFocus();
 			});
 
-			container.getChildren().add(letterPairHeader);
+			pieceTypeContainer.getChildren().add(letterPairHeader);
 
 			masterLetterPairMap.put(type, letterPairIncludes);
 			masterBoolMap.put(type, typeBoolMap);
 			masterIntMap.put(type, typeIntMap);
+
+			container.getChildren().add(pieceTypeContainer);
 		}
 
 		// nasty hack for coupled parities
@@ -275,9 +303,55 @@ public class Main extends Application {
 
 		santa.setResultConverter(param -> {
 			if (param == ButtonType.OK) {
-				BldScramble scr = new BldScramble(puzzle.getAnalyzingPuzzle(), puzzle.generateScramblingPuzzle());
+				Supplier<Puzzle> stdSupplier = puzzle.generateScramblingPuzzle();
+				Supplier<Puzzle> scrambleSupplier = () -> {
+					Puzzle tNoodle = stdSupplier.get();
+
+					if (tNoodle instanceof ThreeByThreeCubePuzzle) {
+						boolean scrambleCorners = masterScrambleMap.get(CubicPieceType.CORNER).isSelected();
+						boolean scrambleEdges = masterScrambleMap.get(CubicPieceType.EDGE).isSelected();
+						boolean isRandom = scrambleCorners && scrambleEdges;
+
+						if (!isRandom) {
+							ThreeByThreeCubePuzzle castTNoodle = (ThreeByThreeCubePuzzle) tNoodle;
+
+							byte[] cp = Tools.STATE_SOLVED;
+							byte[] co = Tools.STATE_SOLVED;
+
+							if (scrambleCorners) {
+								cp = Tools.STATE_RANDOM;
+								co = Tools.STATE_RANDOM;
+							}
+
+							byte[] ep = Tools.STATE_SOLVED;
+							byte[] eo = Tools.STATE_SOLVED;
+
+							if (scrambleEdges) {
+								ep = Tools.STATE_RANDOM;
+								eo = Tools.STATE_RANDOM;
+							}
+
+							castTNoodle.setCustomConfig(new byte[][]{
+									cp,
+									co,
+									ep,
+									eo
+							});
+
+							return castTNoodle;
+						}
+					}
+
+					return tNoodle;
+				};
+
+				BldScramble scr = new BldScramble(puzzle.getAnalyzingPuzzle(), scrambleSupplier);
 
 				for (PieceType type : puzzle.getAnalyzingPuzzle().getPieceTypes()) {
+					if (!masterScrambleMap.get(type).isSelected()) {
+						continue;
+					}
+
 					Map<String, Pair<Spinner<Integer>, Spinner<Integer>>> intMap = masterIntMap.get(type);
 					Map<String, Pair<CheckBox, CheckBox>> boolMap = masterBoolMap.get(type);
 					HBox letterPairIncludes = masterLetterPairMap.get(type);
