@@ -1,5 +1,7 @@
 out/
+build/
 .idea/
+.gradle/
 META-INF/
 *.iml
 *.vcs
